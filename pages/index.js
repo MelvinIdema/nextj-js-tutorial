@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Head from 'next/head';
 import Link from "next/link";
 import Layout, { siteTitle } from '../components/layout';
@@ -14,12 +15,25 @@ export async function getStaticProps() {
 }
 
 export default function Home({ allPostsData }) {
+    const [msg, setMsg] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        fetch("/api/hello")
+            .then(res => res.json())
+            .then(data => setMsg(data.text))
+            .catch(err => setMsg(err))
+            .finally(() => setLoading(false));
+    }, [])
+
     return (
         <Layout home>
             <Head>
                 <title>{siteTitle}</title>
             </Head>
             <section className={utilStyles.headingMd}>
+                <div>{!loading && msg}</div>
                 <p>Hello, I'm <strong>Melvin</strong>. A Next.JS student.</p>
                 <p>
                     (This is a sample website - you’ll be building a site like this on{' '}
